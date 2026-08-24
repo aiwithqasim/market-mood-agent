@@ -46,6 +46,7 @@ services:
     volumes:
       - ./mood:/opt/airflow/mood
       - ./streamlit_app.py:/opt/airflow/streamlit_app.py
+      - ./img:/opt/airflow/img
       - ${USERPROFILE}/.aws:/home/airflow/.aws:ro
     working_dir: /opt/airflow
     command: bash -c "streamlit run streamlit_app.py --server.address 0.0.0.0"
