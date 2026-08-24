@@ -1,0 +1,54 @@
+services:
+  airflow-postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+
+  airflow:
+    build: .
+    depends_on:
+      airflow-postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      PYTHONPATH: /opt/airflow
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./mood:/opt/airflow/mood
+      - ./scripts:/opt/airflow/scripts
+      - ./sql:/opt/airflow/sql
+      - ./logs:/opt/airflow/logs
+      - ${USERPROFILE}/.aws:/home/airflow/.aws:ro
+    command: standalone
+
+  streamlit:
+    build: .
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: /opt/airflow
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./mood:/opt/airflow/mood
+      - ./streamlit_app.py:/opt/airflow/streamlit_app.py
+      - ${USERPROFILE}/.aws:/home/airflow/.aws:ro
+    working_dir: /opt/airflow
+    command: bash -c "streamlit run streamlit_app.py --server.address 0.0.0.0"
+
+volumes:
+  airflow-postgres-data:
