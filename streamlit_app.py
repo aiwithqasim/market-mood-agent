@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pandas as pd
 import streamlit as st
@@ -10,6 +11,7 @@ st.set_page_config(page_title="Market Mood Agent", page_icon="🎨", layout="wid
 
 TICKER = os.environ.get("TARGET_TICKERS", "SPY").split(",")[0].strip()
 DEMO_MODE = os.environ.get("DEMO_MODE", "").lower() == "true"
+IMG_DIR = Path(__file__).parent / "img"
 
 MOOD_EMOJI = {
     "euphoric": "🌞",
@@ -31,7 +33,7 @@ DEMO_ROWS = [
             "the scant uptick in momentum, while an unusual quietness in trading "
             "volume hints at a market holding its breath."
         ),
-        "image_path": "img/mood_anxious_2026-08-10.png",
+        "image_path": "mood_anxious_2026-08-10.png",
         "predicted_next_day_vol": 0.010223253596387968,
         "actual_next_day_vol": 0.010503005750175478,
         "accuracy_delta": -0.00027975215378750994,
@@ -48,7 +50,7 @@ DEMO_ROWS = [
             "The air is thick with trepidation, as if the slightest breeze could "
             "shift the market's fragile balance."
         ),
-        "image_path": "img/mood_anxious_2026-08-14.png",
+        "image_path": "mood_anxious_2026-08-14.png",
         "predicted_next_day_vol": 0.007382080160527397,
         "actual_next_day_vol": 0.00684083699796479,
         "accuracy_delta": 0.0005412431625626069,
@@ -65,7 +67,7 @@ DEMO_ROWS = [
             "drift in momentum further underscores the quiet, contemplative nature "
             "of today's trading session."
         ),
-        "image_path": "img/mood_calm_2026-08-21.png",
+        "image_path": "mood_calm_2026-08-21.png",
         "predicted_next_day_vol": 0.004938320228770954,
         "actual_next_day_vol": None,
         "accuracy_delta": None,
@@ -170,7 +172,7 @@ def main():
     st.subheader("Daily gallery")
     for _, row in df.sort_values("run_date", ascending=False).iterrows():
         if use_demo:
-            image = row["image_path"]
+            image = str(IMG_DIR / row["image_path"])
         else:
             image = load_image(row["image_s3_key"]) if row["image_s3_key"] else None
         render_gallery_row(row, image)
