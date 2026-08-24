@@ -4,6 +4,8 @@ A self-running creative agent that reads real market data, computes a daily "moo
 
 Built for the AWS Weekend Challenge. Every number, narrative, and painting below is real output from this pipeline; nothing here is a mockup.
 
+**Live demo:** [market-mood-agent.streamlit.app](https://market-mood-agent.streamlit.app/) (shows 3 real pre-generated days; the live version with a real-time Snowflake/Bedrock connection runs locally via Docker, see setup below)
+
 <p align="center">
   <img src="img/mood_anxious_2026-08-10.png" width="32%" alt="Anxious mood, 2026-08-10">
   <img src="img/mood_anxious_2026-08-14.png" width="32%" alt="Anxious mood, 2026-08-14">
